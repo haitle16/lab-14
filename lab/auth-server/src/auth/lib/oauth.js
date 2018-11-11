@@ -15,39 +15,40 @@ const authorize = (req) => {
 
   let code = req.query.code;
 
-  console.log('(1) code', code);
+  console.log('(1) code:', code);
 
   // exchange the code or a token
-  return superagent.post('https://www.googleapis.com/oauth2/v4/token')
+  return superagent.post('https://github.com/login/oauth/access_token')
     .type('form')
     .send({
       code: code,
-      client_id: process.env.GOOGLE_CLIENT_ID,
-      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
       redirect_uri: `${process.env.API_URL}/oauth`,
       grant_type: 'authorization_code',
     })
     .then( response => {
-      let googleToken = response.body.access_token;
-      console.log('(2) google token', googleToken);
-      return googleToken;
+      let siteToken = response.body.access_token;
+      console.log('(2) google token', siteToken);
+      return siteToken;
     })
   // use the token to get a user
+  //https://api.github.com/user
     .then ( token => {
-      return superagent.get('https://www.googleapis.com/plus/v1/people/me/openIdConnect')
+      return superagent.get('https://api.github.com/user')
         .set('Authorization', `Bearer ${token}`)
         .then (response => {
           let user = response.body;
           console.log('(3) Google User', user);
           return user;
-        });
+        })
     })
     .then(googleUser => {
       console.log('(4) Creating Account')
       return User.createFromOAuth(googleUser);
     })
     .then (user => {
-      console.log('(5) Created User, generating token');
+      console.log('(5) Created User, generating token, user:', user);
       return user.generateToken();
     })
     .catch(error=>error);
