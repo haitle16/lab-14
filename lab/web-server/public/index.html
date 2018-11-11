@@ -116,12 +116,12 @@
 
         </script>
 
-        <script>
+        <!-- <script>
 
           let googleURL = "https://accounts.google.com/o/oauth2/v2/auth";
 
           let options = {
-            client_id:'',
+            client_id:'28111691880-q9ggmrpv4offsmtbgqpps1r2pslftm7t.apps.googleusercontent.com',
             redirect_uri: 'http://localhost:3000/oauth',
             scope: 'email openid profile',
             prompt: 'consent',
@@ -135,6 +135,28 @@
           let authURL = `${googleURL}?${QueryString}`;
 
           $('#oauth').append(`<a href="${authURL}">Login With Google</a>`);
+
+        </script> -->
+
+        <script>
+
+          let githubURL = "https://github.com/login/oauth/authorize";
+
+          let options = {
+            client_id:'362bdcf8ad64d99ea51e',
+            redirect_uri: 'http://localhost:3000/oauth',
+            scope: 'email openid profile',
+            prompt: 'consent',
+            response_type: 'code'
+          }
+
+          let QueryString = Object.keys(options).map( (key,i) => {
+            return `${key}=` + encodeURIComponent(options[key]);
+          }).join("&");
+
+          let authURL = `${githubURL}?${QueryString}`;
+
+          $('#oauth').append(`<a href="${authURL}">Login With Github</a>`);
 
         </script>
 
